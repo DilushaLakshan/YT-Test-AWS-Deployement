@@ -1,0 +1,31 @@
+name: Deploy HTML Website via SSH
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Copy Files to Server
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: "13.213.78.62"
+        username: ubuntu
+        key: ${{ secrets.SECRET-AWS-TEST }}
+        source: "*"
+        target: "/www/wwwroot/roamradience.linkpc.net"
+
+    - name: Restart Web Server (Optional)
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: "13.213.78.62"
+        username: ubuntu
+        key: ${{ secrets.SECRET-AWS-TEST }}
+        script: "sudo systemctl restart nginx"
